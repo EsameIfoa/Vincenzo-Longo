@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import it.ifoa.progettofinaleifoa.models.Product;
@@ -35,10 +37,42 @@ public class ProductController {
     //CREATE - STORE - EDIT - UPDATE
     //NON DIMENTICARE I MAPPING GET E POST CORRISPONDENTI
 
+    @GetMapping("create")
+        public String create(Model viewModel){
+        viewModel.addAttribute("title", "Aggiungi un nuovo prodotto");
+        viewModel.addAttribute("product", new Product());
+        viewModel.addAttribute("categories", categoryRepository.findAll());
+        return "createProduct";
+    }
 
+    @PostMapping
+public String store(@ModelAttribute("product") Product product){
+productService.create(product);
+return "redirect:/products";
+}
+
+
+
+    @GetMapping("edit/{id}")
+    public String edit(@PathVariable("id") Long id, Model viewModel){
+        viewModel.addAttribute("title", "Modifica il prodotto: " + id);
+        viewModel.addAttribute("product", productService.read(id));
+        viewModel.addAttribute("categories", categoryRepository.findAll());
+        return "editProduct";
+    }
+
+    @PostMapping("update/{id}")
+    public String update (@PathVariable("id") Product product){
+        productService.update(product.getId(), product);
+        return "redirect:/products";
+    }
+
+    
     @GetMapping("delete/{id}")
     public String delete(@PathVariable("id") Long id){
         productService.delete(id);
         return "redirect:/products";
     }
+
+
 }

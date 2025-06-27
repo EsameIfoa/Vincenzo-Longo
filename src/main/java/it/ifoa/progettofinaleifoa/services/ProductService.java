@@ -30,6 +30,23 @@ public class ProductService implements CrudService<Product, Long>{
     //CREATE - UPDATE
     //NON DIMENTICARE I MAPPING GET E POST CORRISPONDENTI
 
+    @Override
+        public Product create(Product product) {
+        return productRepository.save(product);
+    }
+
+
+    @Override
+        public Product update(Long id, Product product) {
+            if (productRepository.existsById(id)) {
+                product.setId(id);
+                return productRepository.save(product);
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            }
+        }
+
+
 
     @Override
     public void delete(Long id) {
